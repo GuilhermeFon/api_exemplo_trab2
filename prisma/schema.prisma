@@ -64,16 +64,17 @@ model Servico {
   @@map("servicos")
 }
 
+
 model Reserva {
-  id        Int           @id @default(autoincrement())
-  cliente   Cliente       @relation(fields: [clienteId], references: [id])
-  clienteId String        @db.VarChar(36)
-  servico   Servico       @relation(fields: [servicoId], references: [id])
+  id        Int              @id @default(autoincrement())
+  cliente   Cliente          @relation(fields: [clienteId], references: [id])
+  clienteId String           @db.VarChar(36)
+  servico   Servico          @relation(fields: [servicoId], references: [id])
   servicoId Int
   data      DateTime
-  status    StatusReserva @default(PENDENTE)
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  status    StatusReservaEnum @default(PENDENTE)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 
   @@map("reservas")
 }
@@ -100,7 +101,7 @@ enum TipoPlano {
   OURO
 }
 
-enum StatusReserva {
+enum StatusReservaEnum {
   PENDENTE
   CONFIRMADA
   CANCELADA
