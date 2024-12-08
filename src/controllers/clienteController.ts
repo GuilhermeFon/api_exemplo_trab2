@@ -22,7 +22,7 @@ export const registerCliente = async (req: Request, res: Response) => {
 
     const clienteExistente = await prisma.cliente.findUnique({where: {email}});
     if (clienteExistente) {
-      return res.status(400).json({error: "Email já cadastrado."});
+      return res.status(400).json({error: "E-mail já cadastrado."});
     }
 
     const hashedSenha = await bcrypt.hash(senha, 10);
