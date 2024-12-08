@@ -1,5 +1,7 @@
 import type { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
@@ -28,20 +30,35 @@ export const getPrestador = async (req: Request, res: Response) => {
 
 export const createPrestador = async (req: Request, res: Response) => {
   try {
-    const { usuarioId, descricao, profissoes } = req.body;
+    const { nome, email, senha, cpf, pais, estado, cidade, dataNascimento, celular, imagem, descricao, linkedin, profissoes, plano } = req.body;
 
-    // Verifique se `profissoes` é um array válido antes de prosseguir
-    if (!Array.isArray(profissoes) || profissoes.some((p) => typeof p !== "string")) {
-      return res.status(400).json({ error: "O campo 'profissoes' deve ser um array de strings." });
+    const prestadorExistente = await prisma.prestador.findUnique({ where: { email } });
+    if (prestadorExistente) {
+      return res.status(400).json({ error: "Email já cadastrado." });
     }
 
+    const hashedSenha = await bcrypt.hash(senha, 10);
     const prestador = await prisma.prestador.create({
-      data: { usuarioId, descricao, profissoes },
+      data: {
+        nome,
+        email,
+        senha: hashedSenha,
+        cpf,
+        pais,
+        estado,
+        cidade,
+        dataNascimento: new Date(dataNascimento),
+        celular,
+        imagem,
+        descricao,
+        linkedin,
+        profissoes,
+        plano,
+      },
     });
 
     res.status(201).json(prestador);
   } catch (error) {
-    console.error(error);
     res.status(400).json({ error: "Erro ao criar prestador." });
   }
 };
@@ -49,21 +66,19 @@ export const createPrestador = async (req: Request, res: Response) => {
 export const updatePrestador = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { descricao, profissoes } = req.body;
+    const { nome, email, senha, cpf, pais, estado, cidade, dataNascimento, celular, imagem, descricao, linkedin, profissoes, plano } = req.body;
 
-    // Verifique se `profissoes` é um array válido antes de atualizar
-    if (profissoes && (!Array.isArray(profissoes) || profissoes.some((p) => typeof p !== "string"))) {
-      return res.status(400).json({ error: "O campo 'profissoes' deve ser um array de strings." });
+    if (senha) {
+      req.body.senha = await bcrypt.hash(senha, 10);
     }
 
     const prestador = await prisma.prestador.update({
       where: { id: Number(id) },
-      data: { descricao, profissoes },
+      data: { nome, email, senha: req.body.senha, cpf, pais, estado, cidade, dataNascimento: new Date(dataNascimento), celular, imagem, descricao, linkedin, profissoes, plano },
     });
 
     res.json(prestador);
   } catch (error) {
-    console.error(error);
     res.status(400).json({ error: "Erro ao atualizar prestador." });
   }
 };
@@ -75,5 +90,28 @@ export const deletePrestador = async (req: Request, res: Response) => {
     res.status(204).send();
   } catch (error) {
     res.status(400).json({ error: "Erro ao excluir prestador." });
+  }
+};
+
+export const loginPrestador = async (req: Request, res: Response) => {
+  try {
+    const { email, senha } = req.body;
+    const prestador = await prisma.prestador.findUnique({ where: { email } });
+
+    if (!prestador) {
+      return res.status(401).json({ error: "Email não encontrado." });
+    }
+
+    const senhaValida = await bcrypt.compare(senha, prestador.senha);
+    if (!senhaValida) {
+      return res.status(401).json({ error: "Senha incorreta." });
+    }
+
+    const token = jwt.sign({ id: prestador.id }, "chave-secreta", {
+      expiresIn: "1h",
+    });
+    res.json({ token });
+  } catch (error) {
+    res.status(400).json({ error: "Erro ao fazer login.", details: error.message });
   }
 };
