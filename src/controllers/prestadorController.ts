@@ -129,7 +129,11 @@ export const loginPrestador = async (req: Request, res: Response) => {
     const token = jwt.sign({ id: prestador.id }, "chave-secreta", {
       expiresIn: "1h",
     });
-    res.json({ token: token, id: prestador.id });
+    res.json({
+      token: token, id: prestador.id, nome: prestador.nome, email: prestador.email, imagem: prestador.imagem, cpf: prestador.cpf,
+      pais: prestador.pais, estado: prestador.estado, cidade: prestador.cidade, dataNascimento: prestador.dataNascimento, celular: prestador.celular,
+      descricao: prestador.descricao, plano: prestador.plano, profissoes: prestador.profissoes, linkedin: prestador.linkedin, senha: prestador.senha,
+    });
   } catch (error) {
     res.status(400).json({ error: "Erro ao fazer login.", details: error.message });
   }
