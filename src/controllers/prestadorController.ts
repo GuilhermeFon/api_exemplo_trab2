@@ -30,11 +30,26 @@ export const getPrestador = async (req: Request, res: Response) => {
 
 export const createPrestador = async (req: Request, res: Response) => {
   try {
-    const { nome, email, senha, cpf, pais, estado, cidade, dataNascimento, celular, imagem, descricao, linkedin, profissoes, plano } = req.body;
+    const {
+      nome,
+      email,
+      senha,
+      cpf,
+      pais,
+      estado,
+      cidade,
+      dataNascimento,
+      celular,
+      imagem,
+      descricao,
+      linkedin,
+      profissoes,
+      plano,
+    } = req.body;
 
     const prestadorExistente = await prisma.prestador.findUnique({ where: { email } });
     if (prestadorExistente) {
-      return res.status(400).json({ error: "Email já cadastrado." });
+      return res.status(400).json({ error: 'Email já cadastrado.' });
     }
 
     const hashedSenha = await bcrypt.hash(senha, 10);
@@ -52,14 +67,14 @@ export const createPrestador = async (req: Request, res: Response) => {
         imagem,
         descricao,
         linkedin,
-        profissoes,
+        profissoes: JSON.parse(profissoes),
         plano,
       },
     });
 
     res.status(201).json(prestador);
   } catch (error) {
-    res.status(400).json({ error: "Erro ao criar prestador." });
+    res.status(400).json({ error: 'Erro ao criar prestador.' });
   }
 };
 
