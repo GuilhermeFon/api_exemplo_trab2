@@ -30,6 +30,7 @@ export const getPrestador = async (req: Request, res: Response) => {
 
 export const createPrestador = async (req: Request, res: Response) => {
   try {
+    console.log("reqbody",req.body);
     const {
       nome,
       email,
