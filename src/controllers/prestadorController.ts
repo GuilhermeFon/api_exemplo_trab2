@@ -78,8 +78,8 @@ export const createPrestador = async (req: Request, res: Response) => {
     res.status(201).json(prestador);
   } catch (error) {
     console.error('Erro ao criar prestador:', error);
-    res.status(400).json({ error: 'Erro ao criar prestador.' });
-  }
+    res.status(400).json({ error: 'Erro ao criar prestador.' });
+  }
 };
 
 export const updatePrestador = async (req: Request, res: Response) => {
@@ -129,7 +129,7 @@ export const loginPrestador = async (req: Request, res: Response) => {
     const token = jwt.sign({ id: prestador.id }, "chave-secreta", {
       expiresIn: "1h",
     });
-    res.json({ token });
+    res.json({ token: token, id: prestador.id });
   } catch (error) {
     res.status(400).json({ error: "Erro ao fazer login.", details: error.message });
   }
