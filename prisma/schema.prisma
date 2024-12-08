@@ -44,7 +44,7 @@ model Prestador {
   profissoes     String[] 
   servicos       Servico[]
   avaliacoes     Avaliacao[]
-  plano          TipoPlano
+  plano          TipoPlano?
 
   @@map("prestadores")
 }
