@@ -30,7 +30,6 @@ export const getPrestador = async (req: Request, res: Response) => {
 
 export const createPrestador = async (req: Request, res: Response) => {
   try {
-    console.log("reqbody",req.body);
     const {
       nome,
       email,
@@ -44,10 +43,11 @@ export const createPrestador = async (req: Request, res: Response) => {
       imagem,
       descricao,
       linkedin,
-      profissoes,
+      profissoes, // Should be an array now
       plano,
     } = req.body;
 
+    // Proceed as normal without parsing profissoes
     const prestadorExistente = await prisma.prestador.findUnique({ where: { email } });
     if (prestadorExistente) {
       return res.status(400).json({ error: 'Email já cadastrado.' });
@@ -68,16 +68,16 @@ export const createPrestador = async (req: Request, res: Response) => {
         imagem,
         descricao,
         linkedin,
-        profissoes: JSON.parse(profissoes),
+        profissoes, // Use directly
         plano,
       },
     });
 
     res.status(201).json(prestador);
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ error: 'Erro ao criar prestador.' });
-  }
+    console.error('Erro ao criar prestador:', error);
+    res.status(400).json({ error: 'Erro ao criar prestador.' });
+  }
 };
 
 export const updatePrestador = async (req: Request, res: Response) => {
