@@ -74,6 +74,7 @@ export const createPrestador = async (req: Request, res: Response) => {
 
     res.status(201).json(prestador);
   } catch (error) {
+    console.error(error);
     res.status(400).json({ error: 'Erro ao criar prestador.' });
   }
 };
