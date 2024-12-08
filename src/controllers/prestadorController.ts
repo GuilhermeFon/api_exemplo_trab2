@@ -43,11 +43,13 @@ export const createPrestador = async (req: Request, res: Response) => {
       imagem,
       descricao,
       linkedin,
-      profissoes, // Should be an array now
+      profissoes,
       plano,
     } = req.body;
 
-    // Proceed as normal without parsing profissoes
+    // Handle 'imagem' correctly
+    const imagemValue = typeof imagem === 'string' ? imagem : null;
+
     const prestadorExistente = await prisma.prestador.findUnique({ where: { email } });
     if (prestadorExistente) {
       return res.status(400).json({ error: 'Email já cadastrado.' });
@@ -65,10 +67,10 @@ export const createPrestador = async (req: Request, res: Response) => {
         cidade,
         dataNascimento: new Date(dataNascimento),
         celular,
-        imagem,
+        imagem: imagemValue, // Use the correct value
         descricao,
         linkedin,
-        profissoes, // Use directly
+        profissoes,
         plano,
       },
     });
