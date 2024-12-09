@@ -31,7 +31,7 @@ export const getPrestador = async (req: Request, res: Response) => {
 };
 
 export const createPrestador = [
-  upload.single("imagem"),
+  upload.single('imagem'),
   async (req: Request, res: Response) => {
     try {
       const {
@@ -50,6 +50,9 @@ export const createPrestador = [
         plano,
       } = req.body;
 
+      // Parse 'profissoes' from JSON string to array
+      const profissoesArray = profissoes ? JSON.parse(profissoes) : [];
+
       // Upload da imagem para o Google Drive
       let imagemUrl = null;
       if (req.file) {
@@ -57,10 +60,10 @@ export const createPrestador = [
       }
 
       const prestadorExistente = await prisma.prestador.findUnique({
-        where: {email},
+        where: { email },
       });
       if (prestadorExistente) {
-        return res.status(400).json({error: "Email já cadastrado."});
+        return res.status(400).json({ error: 'Email já cadastrado.' });
       }
 
       const hashedSenha = await bcrypt.hash(senha, 10);
@@ -78,15 +81,15 @@ export const createPrestador = [
           imagem: imagemUrl,
           descricao,
           linkedin,
-          profissoes,
+          profissoes: profissoesArray, // Use the parsed array
           plano,
         },
       });
 
       res.status(201).json(prestador);
     } catch (error) {
-      console.error("Erro ao criar prestador:", error);
-      res.status(400).json({error: "Erro ao criar prestador."});
+      console.error('Erro ao criar prestador:', error);
+      res.status(400).json({ error: 'Erro ao criar prestador.' });
     }
   },
 ];
