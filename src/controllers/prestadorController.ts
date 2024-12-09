@@ -56,7 +56,8 @@ export const createPrestador = [
       // Upload da imagem para o Google Drive
       let imagemUrl = null;
       if (req.file) {
-        imagemUrl = await uploadToDrive(req.file);
+        const fileId = await uploadToDrive(req.file);
+        imagemUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
       }
 
       const prestadorExistente = await prisma.prestador.findUnique({

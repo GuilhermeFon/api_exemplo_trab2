@@ -1,4 +1,3 @@
-// src/utils/googleDrive.ts
 import { google } from 'googleapis';
 import { Readable } from 'stream';
 
@@ -23,7 +22,7 @@ const drive = google.drive({
 export const uploadToDrive = async (file: Express.Multer.File): Promise<string> => {
   const fileMetadata = {
     name: file.originalname,
-    parents: ['1sp_nrtIr1QZm6Inh4S6iI_DcBmJagM8B'], // Substitua pelo ID da pasta desejada
+    parents: ['1sp_nrtIr1QZm6Inh4S6iI_DcBmJagM8B'], // ID da pasta 
   };
 
   const media = {
@@ -48,10 +47,6 @@ export const uploadToDrive = async (file: Express.Multer.File): Promise<string> 
     },
   });
 
-  const result = await drive.files.get({
-    fileId: fileId!,
-    fields: 'webViewLink, webContentLink',
-  });
-
-  return result.data.webViewLink || result.data.webContentLink || '';
+  // Retornar a URL direta da imagem
+  return `https://drive.google.com/uc?export=view&id=${fileId}`;
 };
