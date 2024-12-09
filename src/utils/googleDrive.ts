@@ -48,5 +48,7 @@ export const uploadToDrive = async (file: Express.Multer.File): Promise<string> 
   });
 
   // Retornar a URL direta da imagem
-  return `https://drive.google.com/uc?export=view&id=${fileId}`;
+  const imageUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+  console.log('Image URL:', imageUrl);
+  return imageUrl; // Certifique-se de retornar a URL
 };
