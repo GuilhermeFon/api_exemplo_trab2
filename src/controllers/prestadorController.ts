@@ -54,7 +54,7 @@ export const createPrestador = [
       const profissoesArray = profissoes ? JSON.parse(profissoes) : [];
 
       // Upload da imagem para o Google Drive
-      let imagemUrl = null;
+      let imagemUrl: string | null = null;
       if (req.file) {
         imagemUrl = await uploadToDrive(req.file);
       }
