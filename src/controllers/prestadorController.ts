@@ -98,7 +98,7 @@ export const updatePrestador = [
   upload.single("imagem"),
   async (req: Request, res: Response) => {
     try {
-      const { id } = req.params;
+      const {id} = req.params;
       const {
         nome,
         email,
@@ -143,14 +143,16 @@ export const updatePrestador = [
       }
 
       const prestador = await prisma.prestador.update({
-        where: { id: Number(id) },
+        where: {id: Number(id)},
         data: updatedData,
       });
 
       res.json(prestador);
     } catch (error) {
       console.error("Erro ao atualizar prestador:", error);
-      res.status(400).json({ error: "Erro ao atualizar prestador.", details: error.message });
+      res
+        .status(400)
+        .json({error: "Erro ao atualizar prestador.", details: error.message});
     }
   },
 ];
@@ -198,7 +200,6 @@ export const loginPrestador = async (req: Request, res: Response) => {
       plano: prestador.plano,
       profissoes: prestador.profissoes,
       linkedin: prestador.linkedin,
-      senha: prestador.senha,
     });
   } catch (error) {
     res

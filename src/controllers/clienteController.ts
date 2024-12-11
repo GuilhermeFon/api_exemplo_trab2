@@ -7,7 +7,6 @@ import {uploadToDrive} from "../utils/googleDrive";
 
 const prisma = new PrismaClient();
 
-
 export const registerCliente = [
   upload.single("imagem"),
   async (req: Request, res: Response) => {
@@ -77,7 +76,18 @@ export const loginCliente = async (req: Request, res: Response) => {
     const token = jwt.sign({id: cliente.id}, "chave-secreta", {
       expiresIn: "1h",
     });
-    res.json({token});
+    res.json({token: token,
+      id: cliente.id,
+      nome: cliente.nome,
+      email: cliente.email,
+      imagem: cliente.imagem,
+      cpf: cliente.cpf,
+      pais: cliente.pais,
+      estado: cliente.estado,
+      cidade: cliente.cidade,
+      dataNascimento: cliente.dataNascimento,
+      celular: cliente.celular,
+    });
   } catch (error) {
     res
       .status(400)
