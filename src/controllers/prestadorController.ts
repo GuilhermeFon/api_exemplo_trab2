@@ -200,6 +200,7 @@ export const loginPrestador = async (req: Request, res: Response) => {
       plano: prestador.plano,
       profissoes: prestador.profissoes,
       linkedin: prestador.linkedin,
+      tipo: "prestador",
     });
   } catch (error) {
     res
