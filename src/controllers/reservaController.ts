@@ -20,25 +20,32 @@ export const getAllReservas = async (req: Request, res: Response) => {
 
 // Controlador para obter uma reserva específica pelo ID
 export const getReserva = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const prestadorId = req.params.prestadorId ? Number(req.params.prestadorId) : undefined;
+  const clienteId = req.params.clienteId ? req.params.clienteId : undefined;
+
+  if (!prestadorId && !clienteId) {
+    return res.status(400).json({ error: "Either prestadorId or clienteId must be provided." });
+  }
 
   try {
-    const reserva = await prisma.reserva.findUnique({
-      where: { id: Number(id) },
+    const reserva = await prisma.reserva.findMany({
+      where: prestadorId
+        ? { prestadorId: prestadorId }
+        : { clienteId: clienteId },
       include: {
-        cliente: true, // Incluir informações do cliente
-        prestador: true, // Incluir informações do prestador
+        cliente: true,
+        prestador: true,
       },
     });
 
-    if (!reserva) {
-      return res.status(404).json({ error: "Reserva não encontrada." });
+    if (reserva.length === 0) {
+      return res.status(404).json({ error: "Reservas não encontradas." });
     }
 
     res.status(200).json(reserva);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Erro ao buscar reserva. Tente novamente mais tarde." });
+    res.status(500).json({ error: "Erro ao buscar reservas. Tente novamente mais tarde." });
   }
 };
 
