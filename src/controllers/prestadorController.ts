@@ -98,7 +98,7 @@ export const updatePrestador = [
   upload.single("imagem"),
   async (req: Request, res: Response) => {
     try {
-      const {id} = req.params;
+      const { id } = req.params;
       const {
         nome,
         email,
@@ -115,6 +115,9 @@ export const updatePrestador = [
         plano,
       } = req.body;
 
+      // Parse 'profissoes' from JSON string to array
+      const profissoesArray = profissoes ? JSON.parse(profissoes) : [];
+
       const updatedData: any = {
         nome,
         email,
@@ -126,7 +129,7 @@ export const updatePrestador = [
         celular,
         descricao,
         linkedin,
-        profissoes,
+        profissoes: profissoesArray, // Use the parsed array
         plano,
       };
 
@@ -140,13 +143,14 @@ export const updatePrestador = [
       }
 
       const prestador = await prisma.prestador.update({
-        where: {id: Number(id)},
+        where: { id: Number(id) },
         data: updatedData,
       });
 
       res.json(prestador);
     } catch (error) {
-      res.status(400).json({error: "Erro ao atualizar prestador."});
+      console.error("Erro ao atualizar prestador:", error);
+      res.status(400).json({ error: "Erro ao atualizar prestador.", details: error.message });
     }
   },
 ];
