@@ -1,52 +1,64 @@
 import type {Request, Response} from "express";
-import {PrismaClient} from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import {PrismaClient} from "@prisma/client";
+import multer from "multer";
+import {uploadToDrive} from "../utils/googleDrive";
 
 const prisma = new PrismaClient();
+const upload = multer({dest: "uploads/"});
 
-export const registerCliente = async (req: Request, res: Response) => {
-  try {
-    const {
-      nome,
-      email,
-      senha,
-      cpf,
-      pais,
-      estado,
-      cidade,
-      dataNascimento,
-      celular,
-      imagem,
-    } = req.body;
-
-    const clienteExistente = await prisma.cliente.findUnique({where: {email}});
-    if (clienteExistente) {
-      return res.status(400).json({error: "E-mail já cadastrado."});
-    }
-
-    const hashedSenha = await bcrypt.hash(senha, 10);
-    const cliente = await prisma.cliente.create({
-      data: {
+export const registerCliente = [
+  upload.single("imagem"),
+  async (req: Request, res: Response) => {
+    try {
+      const {
         nome,
         email,
-        senha: hashedSenha,
+        senha,
         cpf,
         pais,
         estado,
         cidade,
-        dataNascimento: new Date(dataNascimento),
+        dataNascimento,
         celular,
-        imagem,
-      },
-    });
-    res.status(201).json(cliente);
-  } catch (error) {
-    res
-      .status(400)
-      .json({error: "Erro ao registrar cliente.", details: error.message});
-  }
-};
+      } = req.body;
+
+      let imagemUrl: string | null = null;
+      if (req.file) {
+        imagemUrl = await uploadToDrive(req.file);
+      }
+
+      const clienteExistente = await prisma.cliente.findUnique({
+        where: {email},
+      });
+      if (clienteExistente) {
+        return res.status(400).json({error: "E-mail já cadastrado."});
+      }
+
+      const hashedSenha = await bcrypt.hash(senha, 10);
+      const cliente = await prisma.cliente.create({
+        data: {
+          nome,
+          email,
+          senha: hashedSenha,
+          cpf,
+          pais,
+          estado,
+          cidade,
+          dataNascimento: new Date(dataNascimento),
+          celular,
+          imagem: imagemUrl,
+        },
+      });
+      res.status(201).json(cliente);
+    } catch (error: any) {
+      res
+        .status(400)
+        .json({error: "Erro ao registrar cliente.", details: error.message});
+    }
+  },
+];
 
 export const loginCliente = async (req: Request, res: Response) => {
   try {
