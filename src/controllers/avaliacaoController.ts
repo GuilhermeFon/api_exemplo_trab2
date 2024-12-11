@@ -1,25 +1,23 @@
-import {PrismaClient} from "@prisma/client";
-import {Request, Response} from "express";
+import { PrismaClient } from "@prisma/client";
+import { Request, Response } from "express";
 
 const prisma = new PrismaClient();
 
 // Criar uma nova avaliação
 export const createAvaliacao = async (req: Request, res: Response) => {
   try {
-    const {clienteId, prestadorId, servicoId, nota, comentario} = req.body;
+    const { clienteId, prestadorId, nota, comentario } = req.body;
 
-    if (!clienteId || !prestadorId || !servicoId || nota === undefined) {
+    if (!clienteId || !prestadorId || nota === undefined) {
       return res.status(400).json({
-        error:
-          "Os campos clienteId, prestadorId, servicoId e nota são obrigatórios.",
+        error: "Os campos clienteId, prestadorId e nota são obrigatórios.",
       });
     }
 
     const avaliacao = await prisma.avaliacao.create({
       data: {
-        cliente: {connect: {id: clienteId}},
-        prestador: {connect: {id: prestadorId}},
-        servico: {connect: {id: servicoId}},
+        cliente: { connect: { id: clienteId } },
+        prestador: { connect: { id: prestadorId } },
         nota,
         comentario,
       },
@@ -36,20 +34,19 @@ export const createAvaliacao = async (req: Request, res: Response) => {
 
 // Obter uma avaliação específica pelo ID
 export const getAvaliacao = async (req: Request, res: Response) => {
-  const {id} = req.params;
+  const { id } = req.params;
 
   try {
     const avaliacao = await prisma.avaliacao.findUnique({
-      where: {id: Number(id)},
+      where: { id: Number(id) },
       include: {
         cliente: true,
         prestador: true,
-        servico: true,
       },
     });
 
     if (!avaliacao) {
-      return res.status(404).json({error: "Avaliação não encontrada."});
+      return res.status(404).json({ error: "Avaliação não encontrada." });
     }
 
     res.status(200).json(avaliacao);
@@ -63,13 +60,13 @@ export const getAvaliacao = async (req: Request, res: Response) => {
 
 // Atualizar uma avaliação existente
 export const updateAvaliacao = async (req: Request, res: Response) => {
-  const {id} = req.params;
-  const {nota, comentario} = req.body;
+  const { id } = req.params;
+  const { nota, comentario } = req.body;
 
   try {
     const avaliacao = await prisma.avaliacao.update({
-      where: {id: Number(id)},
-      data: {nota, comentario},
+      where: { id: Number(id) },
+      data: { nota, comentario },
     });
 
     res.status(200).json(avaliacao);
@@ -83,11 +80,11 @@ export const updateAvaliacao = async (req: Request, res: Response) => {
 
 // Excluir uma avaliação
 export const deleteAvaliacao = async (req: Request, res: Response) => {
-  const {id} = req.params;
+  const { id } = req.params;
 
   try {
     await prisma.avaliacao.delete({
-      where: {id: Number(id)},
+      where: { id: Number(id) },
     });
 
     res.status(204).send();
@@ -104,14 +101,13 @@ export const getAvaliacoesPorPrestador = async (
   req: Request,
   res: Response
 ) => {
-  const {prestadorId} = req.params;
+  const { prestadorId } = req.params;
 
   try {
     const avaliacoes = await prisma.avaliacao.findMany({
-      where: {prestadorId: Number(prestadorId)},
+      where: { prestadorId: Number(prestadorId) },
       include: {
         cliente: true,
-        servico: true,
       },
     });
 
@@ -126,14 +122,13 @@ export const getAvaliacoesPorPrestador = async (
 
 // Obter avaliações por cliente
 export const getAvaliacoesPorCliente = async (req: Request, res: Response) => {
-  const {clienteId} = req.params;
+  const { clienteId } = req.params;
 
   try {
     const avaliacoes = await prisma.avaliacao.findMany({
-      where: {clienteId},
+      where: { clienteId },
       include: {
         prestador: true,
-        servico: true,
       },
     });
 

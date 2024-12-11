@@ -8,7 +8,7 @@ export const getAllReservas = async (req: Request, res: Response) => {
     const reservas = await prisma.reserva.findMany({
       include: {
         cliente: true, // Incluir informações do cliente
-        servico: true, // Incluir informações do serviço
+        prestador: true, // Incluir informações do prestador
       },
     });
     res.status(200).json(reservas);
@@ -27,7 +27,7 @@ export const getReserva = async (req: Request, res: Response) => {
       where: { id: Number(id) },
       include: {
         cliente: true, // Incluir informações do cliente
-        servico: true, // Incluir informações do serviço
+        prestador: true, // Incluir informações do prestador
       },
     });
 
@@ -44,18 +44,18 @@ export const getReserva = async (req: Request, res: Response) => {
 
 // Controlador para criar uma nova reserva
 export const createReserva = async (req: Request, res: Response) => {
-  const { clienteId, servicoId, data } = req.body;
+  const { clienteId, prestadorId, data } = req.body;
 
   // Validação dos dados recebidos
-  if (!clienteId || !servicoId || !data) {
+  if (!clienteId || !prestadorId || !data) {
     return res.status(400).json({
-      error: "Os campos clienteId, servicoId e data são obrigatórios.",
+      error: "Os campos clienteId, prestadorId e data são obrigatórios.",
     });
   }
 
   try {
     const reserva = await prisma.reserva.create({
-      data: { clienteId, servicoId, data: new Date(data) },
+      data: { clienteId, prestadorId, data: new Date(data) },
     });
     res.status(201).json(reserva);
   } catch (error) {
@@ -67,10 +67,10 @@ export const createReserva = async (req: Request, res: Response) => {
 // Controlador para atualizar uma reserva existente
 export const updateReserva = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { clienteId, servicoId, data, status } = req.body;
+  const { clienteId, prestadorId, data, status } = req.body;
 
   // Validação dos dados recebidos
-  if (!clienteId && !servicoId && !data && !status) {
+  if (!clienteId && !prestadorId && !data && !status) {
     return res.status(400).json({
       error: "Pelo menos um campo deve ser fornecido para atualização.",
     });
@@ -79,7 +79,12 @@ export const updateReserva = async (req: Request, res: Response) => {
   try {
     const reserva = await prisma.reserva.update({
       where: { id: Number(id) },
-      data: { clienteId, servicoId, data: data ? new Date(data) : undefined, status },
+      data: {
+        clienteId,
+        prestadorId,
+        data: data ? new Date(data) : undefined,
+        status,
+      },
     });
 
     res.status(200).json(reserva);

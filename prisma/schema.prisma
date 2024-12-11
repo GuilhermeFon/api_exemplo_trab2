@@ -28,53 +28,37 @@ model Cliente {
 }
 
 model Prestador {
-  id             Int         @id @default(autoincrement())
-  nome           String      @db.VarChar(60)
-  email          String      @unique @db.VarChar(60)
-  senha          String      @db.VarChar(60)
-  cpf            String      @unique @db.VarChar(11)
-  pais           String      @db.VarChar(50)
-  estado         String      @db.VarChar(50)
-  cidade         String      @db.VarChar(50)
+  id             Int          @id @default(autoincrement())
+  nome           String       @db.VarChar(60)
+  email          String       @unique @db.VarChar(60)
+  senha          String       @db.VarChar(60)
+  cpf            String       @unique @db.VarChar(11)
+  pais           String       @db.VarChar(50)
+  estado         String       @db.VarChar(50)
+  cidade         String       @db.VarChar(50)
   dataNascimento DateTime
-  celular        String      @db.VarChar(15)
-  imagem         String?     @db.VarChar(255)
-  descricao      String?     @db.VarChar(255)
-  linkedin       String?     @db.VarChar(255)
+  celular        String       @db.VarChar(15)
+  imagem         String?      @db.VarChar(255)
+  descricao      String?      @db.VarChar(255)
+  linkedin       String?      @db.VarChar(255)
   profissoes     String[] 
-  servicos       Servico[]
   avaliacoes     Avaliacao[]
   plano          TipoPlano?
+  reservas       Reserva[]
 
   @@map("prestadores")
 }
 
-model Servico {
-  id          Int         @id @default(autoincrement())
-  nome        String      @db.VarChar(60)
-  descricao   String?     @db.VarChar(255)
-  preco       Decimal     @db.Decimal(10, 2)
-  prestador   Prestador   @relation(fields: [prestadorId], references: [id])
-  prestadorId Int
-  reservas    Reserva[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  Avaliacao   Avaliacao[]
-
-  @@map("servicos")
-}
-
-
 model Reserva {
-  id        Int              @id @default(autoincrement())
-  cliente   Cliente          @relation(fields: [clienteId], references: [id])
-  clienteId String           @db.VarChar(36)
-  servico   Servico          @relation(fields: [servicoId], references: [id])
-  servicoId Int
-  data      DateTime
-  status    StatusReservaEnum @default(PENDENTE)
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
+  id           Int              @id @default(autoincrement())
+  cliente      Cliente          @relation(fields: [clienteId], references: [id])
+  clienteId    String           @db.VarChar(36)
+  prestador    Prestador        @relation(fields: [prestadorId], references: [id])
+  prestadorId  Int
+  data         DateTime
+  status       StatusReservaEnum @default(PENDENTE)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
 
   @@map("reservas")
 }
@@ -85,8 +69,6 @@ model Avaliacao {
   clienteId   String    @db.VarChar(36)
   prestador   Prestador @relation(fields: [prestadorId], references: [id])
   prestadorId Int
-  servico     Servico   @relation(fields: [servicoId], references: [id])
-  servicoId   Int
   nota        Int       @db.SmallInt
   comentario  String?   @db.VarChar(255)
   createdAt   DateTime  @default(now())
