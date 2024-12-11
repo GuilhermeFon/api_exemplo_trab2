@@ -4,11 +4,11 @@ import {authMiddleware} from "../middlewares/authMiddleware";
 
 const router = Router();
 
-router.get("/cliente", authMiddleware, clienteController.getAllClientes);
-router.post("/cliente/signin", clienteController.registerCliente);
-router.post("/cliente/login", clienteController.loginCliente);
-router.get("/cliente/:id", authMiddleware, clienteController.getCliente);
-router.put("/cliente/:id", authMiddleware, clienteController.updateCliente);
-router.delete("/cliente/:id", authMiddleware, clienteController.deleteCliente);
+router.get("/", authMiddleware, clienteController.getAllClientes);
+router.post("/signin", clienteController.registerCliente);
+router.post("/login", clienteController.loginCliente);
+router.get("/:id", authMiddleware, clienteController.getCliente);
+router.put("/:id", authMiddleware, clienteController.updateCliente);
+router.delete("/:id", authMiddleware, clienteController.deleteCliente);
 
 export default router;

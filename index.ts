@@ -15,7 +15,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(cors());
 
 app.use("/avaliacao", avaliacaoRoutes);
-app.use("/clientes", clientesRoutes);
+app.use("/cliente", clientesRoutes);
 app.use("/prestador", prestadorRoutes);
 app.use("/reserva", reservaRoutes);
 app.use("/propostas", propostasRoutes);
