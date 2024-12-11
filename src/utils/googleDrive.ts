@@ -22,7 +22,7 @@ const drive = google.drive({
 export const uploadToDrive = async (file: Express.Multer.File): Promise<string> => {
   const fileMetadata = {
     name: file.originalname,
-    parents: ['1sp_nrtIr1QZm6Inh4S6iI_DcBmJagM8B'], // ID da pasta 
+    parents: ['1sp_nrtIr1QZm6Inh4S6iI_DcBmJagM8B'], 
   };
 
   const media = {
@@ -38,7 +38,6 @@ export const uploadToDrive = async (file: Express.Multer.File): Promise<string> 
 
   const fileId = response.data.id;
 
-  // Definir permissões para obter o link compartilhável
   await drive.permissions.create({
     fileId: fileId!,
     requestBody: {
@@ -47,8 +46,7 @@ export const uploadToDrive = async (file: Express.Multer.File): Promise<string> 
     },
   });
 
-  // Retornar a URL direta da imagem
   const imageUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
   console.log('Image URL:', imageUrl);
-  return imageUrl; // Certifique-se de retornar a URL
+  return imageUrl; 
 };
