@@ -6,7 +6,8 @@ import multer from "multer";
 import {uploadToDrive} from "../utils/googleDrive";
 
 const prisma = new PrismaClient();
-const upload = multer({dest: "uploads/"});
+const storage = multer.memoryStorage();
+const upload = multer({storage});
 
 export const registerCliente = [
   upload.single("imagem"),
@@ -24,8 +25,10 @@ export const registerCliente = [
         celular,
       } = req.body;
 
+      // Upload da imagem para o Google Drive
       let imagemUrl: string | null = null;
       if (req.file) {
+        // Passe o buffer diretamente para a função de upload
         imagemUrl = await uploadToDrive(req.file);
       }
 
