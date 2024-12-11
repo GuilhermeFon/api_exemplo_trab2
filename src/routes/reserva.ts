@@ -6,7 +6,8 @@ const router = Router();
 
 router.post("/", authMiddleware, reservaController.createReserva);
 router.get("/", authMiddleware, reservaController.getAllReservas);
-router.get("/:id", authMiddleware, reservaController.getReserva);
+router.get("/prestador/:id", authMiddleware, reservaController.getReserva);
+router.get("/cliente/:id", authMiddleware, reservaController.getReserva);
 router.put("/:id", authMiddleware, reservaController.updateReserva);
 router.delete("/:id", authMiddleware, reservaController.deleteReserva);
 
