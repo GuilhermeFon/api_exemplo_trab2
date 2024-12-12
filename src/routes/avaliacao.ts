@@ -1,36 +1,50 @@
+// AVALIACAO.TS
 import {Router} from "express";
 import * as avaliacaoController from "../controllers/avaliacaoController";
 import {authMiddleware} from "../middlewares/authMiddleware";
 
 const router = Router();
 
+// Criação de avaliação
 router.post(
-  "/:prestadorId",
+  "/prestador/:prestadorId",
   authMiddleware,
   avaliacaoController.createAvaliacao
 );
-router.post("/:clienteId", authMiddleware, avaliacaoController.createAvaliacao);
-router.get("/:prestadorId", avaliacaoController.getAvaliacao);
-router.get("/:clienteId", avaliacaoController.getAvaliacao);
-router.get("/:prestadorId", avaliacaoController.getAvaliacoesPorPrestador);
-router.get(
-  "/:clienteId",
+router.post(
+  "/cliente/:clienteId",
   authMiddleware,
-  avaliacaoController.getAvaliacoesPorCliente
+  avaliacaoController.createAvaliacao
 );
+
+// Obter avaliações
+router.get(
+  "/prestador/:prestadorId",
+  avaliacaoController.getAvaliacoesPorPrestador
+);
+router.get("/cliente/:clienteId", avaliacaoController.getAvaliacoesPorCliente);
+router.get("/:id", avaliacaoController.getAvaliacao);
+
+// Atualizar avaliação
 router.put(
-  "/:prestadorId",
+  "/prestador/:prestadorId",
   authMiddleware,
   avaliacaoController.updateAvaliacao
 );
-router.put("/:clienteId", authMiddleware, avaliacaoController.updateAvaliacao);
+router.put(
+  "/cliente/:clienteId",
+  authMiddleware,
+  avaliacaoController.updateAvaliacao
+);
+
+// Deletar avaliação
 router.delete(
-  "/:prestadorId",
+  "/prestador/:prestadorId",
   authMiddleware,
   avaliacaoController.deleteAvaliacao
 );
 router.delete(
-  "/:clienteId",
+  "/cliente/:clienteId",
   authMiddleware,
   avaliacaoController.deleteAvaliacao
 );
