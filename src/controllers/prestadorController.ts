@@ -7,10 +7,31 @@ import upload from "../middlewares/uploadMiddleware";
 
 const prisma = new PrismaClient();
 
+// src/controllers/prestadorController.ts
 export const getAllPrestadores = async (req: Request, res: Response) => {
   try {
-    const prestadores = await prisma.prestador.findMany();
-    res.json(prestadores);
+    const prestadores = await prisma.prestador.findMany({
+      include: {
+        avaliacoes: true,
+      },
+    });
+
+    const prestadoresComAvaliacao = prestadores.map((prestador) => {
+      const totalAvaliacoes = prestador.avaliacoes.length;
+      const somaNotas = prestador.avaliacoes.reduce(
+        (acc, avaliacao) => acc + avaliacao.nota,
+        0
+      );
+      const mediaNotas =
+        totalAvaliacoes > 0 ? somaNotas / totalAvaliacoes : null;
+
+      return {
+        ...prestador,
+        mediaNotas,
+      };
+    });
+
+    res.json(prestadoresComAvaliacao);
   } catch (error) {
     res.status(400).json({error: "Erro ao listar prestadores."});
   }
