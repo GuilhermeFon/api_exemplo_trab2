@@ -135,10 +135,9 @@ export const updatePrestador = [
         linkedin,
         profissoes,
         plano,
-        imagem, // Adicionado para capturar o campo 'imagem' do body
       } = req.body;
 
-      // Parse 'profissoes' de string JSON para array
+      // Parse 'profissoes' from JSON string to array
       const profissoesArray = profissoes ? JSON.parse(profissoes) : [];
 
       const updatedData: any = {
@@ -152,7 +151,7 @@ export const updatePrestador = [
         celular,
         descricao,
         linkedin,
-        profissoes: profissoesArray, // Usa o array parseado
+        profissoes: profissoesArray, // Use the parsed array
         plano,
       };
 
@@ -160,11 +159,7 @@ export const updatePrestador = [
         updatedData.senha = await bcrypt.hash(senha, 10);
       }
 
-      // Verifica se o campo 'imagem' foi enviado como uma string vazia ' '
-      if (imagem === " ") {
-        updatedData.imagem = null;
-      } else if (req.file) {
-        // Se um novo arquivo de imagem foi enviado, faz o upload
+      if (req.file) {
         const imagemUrl = await uploadToDrive(req.file);
         updatedData.imagem = imagemUrl;
       }
@@ -175,12 +170,11 @@ export const updatePrestador = [
       });
 
       res.json(prestador);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Erro ao atualizar prestador:", error);
-      res.status(400).json({
-        error: "Erro ao atualizar prestador.",
-        details: error.message,
-      });
+      res
+        .status(400)
+        .json({error: "Erro ao atualizar prestador.", details: error.message});
     }
   },
 ];
