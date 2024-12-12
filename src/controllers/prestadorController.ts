@@ -28,6 +28,7 @@ export const getAllPrestadores = async (req: Request, res: Response) => {
       return {
         ...prestador,
         mediaNotas,
+        totalAvaliacoes,
       };
     });
 
