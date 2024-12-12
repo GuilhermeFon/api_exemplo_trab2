@@ -5,43 +5,32 @@ import {authMiddleware} from "../middlewares/authMiddleware";
 const router = Router();
 
 router.post(
-  "/avaliacao/prestador",
+  "/:prestadorId",
   authMiddleware,
   avaliacaoController.createAvaliacao
 );
-router.post(
-  "/avaliacao/cliente",
-  authMiddleware,
-  avaliacaoController.createAvaliacao
-);
-router.get("/avaliacao/prestador/:id", avaliacaoController.getAvaliacao);
-router.get("/avaliacao/cliente/:id", avaliacaoController.getAvaliacao);
+router.post("/:clienteId", authMiddleware, avaliacaoController.createAvaliacao);
+router.get("/:prestadorId", avaliacaoController.getAvaliacao);
+router.get("/:clienteId", avaliacaoController.getAvaliacao);
+router.get("/:prestadorId", avaliacaoController.getAvaliacoesPorPrestador);
 router.get(
-  "/prestador/:prestadorId",
-  avaliacaoController.getAvaliacoesPorPrestador
-);
-router.get(
-  "/cliente/:clienteId",
+  "/:clienteId",
   authMiddleware,
   avaliacaoController.getAvaliacoesPorCliente
 );
 router.put(
-  "/avaliacao/prestador/:id",
+  "/:prestadorId",
   authMiddleware,
   avaliacaoController.updateAvaliacao
 );
-router.put(
-  "/avaliacao/cliente/:id",
-  authMiddleware,
-  avaliacaoController.updateAvaliacao
-);
+router.put("/:clienteId", authMiddleware, avaliacaoController.updateAvaliacao);
 router.delete(
-  "/avaliacao/prestador/:id",
+  "/:prestadorId",
   authMiddleware,
   avaliacaoController.deleteAvaliacao
 );
 router.delete(
-  "/avaliacao/cliente/:id",
+  "/:clienteId",
   authMiddleware,
   avaliacaoController.deleteAvaliacao
 );
